@@ -1,0 +1,8 @@
+.smallFontSize h1{
+	color: red;
+	font-size: 14px;
+}
+
+.smallFontSize span{
+    color: #fff;
+}

@@ -1,0 +1,17 @@
+.logo{
+    align-items: center;
+    display: flex;
+}
+
+.logo i{
+    width: 48px;
+    height: 48px;
+    font-size: 34px;
+    vertical-align: middle;
+}
+
+.logo span{
+    font-size: 24px;
+    padding-left: 5px;
+    vertical-align: middle;
+}
