@@ -26,7 +26,8 @@ module.exports = {
     devServer:{
         //contentBase:"./",  //设置根目录
         //host:"192.168.1.102",  //主机的ip地址
-        port:"8888"
+        port:"8558",
+        historyApiFallback: true,  //不配置这个路由报错 cannot get
     },
     output:{
         path: __dirname,

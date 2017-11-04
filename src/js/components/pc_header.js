@@ -6,6 +6,7 @@ import {
   Link
 } from 'react-router-dom'
 const FormItem = Form.Item;
+const TabPane = Tabs.TabPane;
 class PCHeader extends React.Component { 
 
   constructor(){
@@ -19,6 +20,13 @@ class PCHeader extends React.Component {
          userid:0
     }
   }
+
+  componentWillMount(){
+    if(localStorage.userid){
+      this.setState({hasLogined:true})
+    }
+  }
+
   showModal() {
     this.setState({
       modalVisible: true,
@@ -37,19 +45,65 @@ class PCHeader extends React.Component {
     });
   }
 
+  handleSubmit(e){
+    //页面FORM提交
+    e.preventDefault();
+    //formData 是所有表单元素的value的 集合
+    let formData = this.props.form.getFieldsValue();
+    console.log(formData)
+    message.success('用户名是'+ formData.r_userName)
+    this.setState({
+      modalVisible: false,
+    });
+    if(this.state.action =='login'){
+      this.setState({hasLogined:true})
+      localStorage.userid = 'weibin'
+    }
+
+  }
+
+  handleClick(e){
+    if(e.key === 'register'){
+      this.setState({current:'register'})
+      this.setState({modalVisible:true})
+    }
+    else{
+      this.setState({current:e.key})
+    }
+  }
+
+  callBack(e){
+    if(e === '1'){
+      this.setState({action:'login'})
+    }
+    else if(e === '2'){
+      this.setState({action:'register'})
+    }
+  }
+
+  logOut(){
+    localStorage.userid = '';
+    this.setState({hasLogined:false})
+  }
+
   render() {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
+    const { getFieldDecorator} = this.props.form;
+    
+    console.log(getFieldDecorator)
     {/* 判断是否登录*/}
     const userShow = this.state.hasLogined
     ?
     <Menu.Item key="logout" className="register">
+        
         <Button type="primary" htmlType="button">{this.state.userNickName}</Button>
         &nbsp;&nbsp;
-        
-        <Button type="dashed" htmlType="button">个人中心</Button>
-   
+       
+        <Link to='/usercenter/'>
+          <Button type="dashed" htmlType="button">个人中心</Button>
+        </Link>
+       
         &nbsp;&nbsp;
-        <Button type="ghost" htmlType="button">退出</Button>
+        <Button type="ghost" htmlType="button" onClick={this.logOut.bind(this)}>退出</Button>
     </Menu.Item>
     :
     <Menu.Item key="register" className="register" >
@@ -68,7 +122,7 @@ class PCHeader extends React.Component {
                     </a>
                   </Col>
                   <Col span={16}>
-                    <Menu mode="horizontal" selectedKeys={[this.state.current]}>
+                    <Menu mode="horizontal" onClick={this.handleClick.bind(this)} selectedKeys={[this.state.current]}>
                         <Menu.Item key="top">
                             <Icon type="appstore" />头条
                         </Menu.Item >
@@ -98,7 +152,49 @@ class PCHeader extends React.Component {
                     
                     </Menu>
         
-                    <Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel={this.handleCancel.bind(this)} onOk={this.handleOk.bind(this)}></Modal>
+                    <Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel={this.handleCancel.bind(this)} onOk={this.handleOk.bind(this)}>
+                        <Tabs type="card" onChange={this.callBack.bind(this)}>                         
+                          <TabPane tab="登录" key="1">
+                            <Form layout='horizontal' onSubmit={this.handleSubmit.bind(this)}>
+                              <FormItem label="账户">
+                                {getFieldDecorator('userName')(
+                                  <Input placeholder="Username" />
+                                )}
+                              </FormItem>
+                              <FormItem label="密码">
+                                {getFieldDecorator('password')(
+                                  <Input placeholder="password" />
+                                )}
+                              </FormItem>
+                              <Button htmlType="submit" type="primary">登录</Button>
+                            </Form>
+                          </TabPane>  
+
+
+
+                          <TabPane tab="注册" key="2">
+                            <Form layout='horizontal' onSubmit={this.handleSubmit.bind(this)}>
+                              <FormItem label="账户">
+                                {getFieldDecorator('r_userName')(
+                                  <Input placeholder="Username" />
+                                )}
+                              </FormItem>
+                              <FormItem label="密码">
+                                {getFieldDecorator('r_password')(
+                                  <Input placeholder="password" />
+                                )}
+                              </FormItem>
+                              <FormItem label="确认密码">
+                                {getFieldDecorator('r_confirmPassword')(
+                                  <Input placeholder="confrimPassword" />
+                                )}
+                              </FormItem>
+                              <Button htmlType="submit" type="primary">注册</Button>
+                            </Form>
+                          </TabPane>
+                         
+                        </Tabs>
+                    </Modal>
                   </Col>
                   <Col span={2}></Col>
                 </Row>
